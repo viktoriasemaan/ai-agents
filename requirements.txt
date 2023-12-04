@@ -1,0 +1,4 @@
+langchain
+faiss-cpu
+boto3
+botocore

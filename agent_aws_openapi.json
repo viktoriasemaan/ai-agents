@@ -1,0 +1,82 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Agent AWS API",
+        "version": "1.0.0",
+        "description": "APIs helpeing customers with knowledge of AWS by querying the AWS Well-Architected Framework, writing code, and creating diagrams."
+    },
+    "paths": {
+        "/query_well_arch_framework": {
+            "get": {
+                "summary": "Query the the AWS Well-Architected Framework to answer a customer question.",
+                "description": "Query the the AWS Well-Architected Framework to answer a customer question. The API takes in the customer query then returns the answer and list of documents.",
+                "operationId": "queryWellArch",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "path",
+                        "description": "Customer query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],                
+                "responses": {
+                    "200": {
+                        "description": "Query the the AWS Well-Architected Framework to answer a customer question.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "answer": {
+                                            "type": "string",
+                                            "description": "The response to customer query and list of documents cited."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/gen_code": {
+            "get": {
+                "summary": "Generate code for the customer",
+                "description": "Write code for the customer. The API takes in the customer query and returns the code for the customer.",
+                "operationId": "genCode",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "path",
+                        "description": "Customer query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Code customer requested",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "description": "The code customer requested"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
