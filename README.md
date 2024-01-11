@@ -35,6 +35,44 @@ pip install -r requirements.txt
 
 [![Amazon CodeWhisperer](https://img.youtube.com/vi/sFh3_cMUrMk/0.jpg)](https://www.youtube.com/watch?v=sFh3_cMUrMk)
 
+## Create the IAM roles
+
+1. In your console, go to your [IAM Dashboard](https://us-east-1.console.aws.amazon.com/iam/).
+2. Go to Policies in the right-hand side menu.
+3. Create one policie named for example Bedrock-InvokeModel-Policy
+   ```json
+   {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "bedrock:InvokeModel",
+            "Resource": [
+                "arn:aws:bedrock:*::foundation-model/*"
+                ]
+            }
+        ]
+    }
+   ```
+  4. Create one policie named for example Bedrock-S3-GetObject
+    ```json
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "VisualEditor0",
+                "Effect": "Allow",
+                "Action": "s3:GetObject",
+                "Resource": "arn:aws:s3:::bedrockreinvent/agent_aws_openapi.json"
+            }
+        ]
+    }
+    ```
+  5. 
+
+
+
 ## Building an Agent
 
 To get started with the agent, open the Bedrock console, select Agents in the left navigation panel, then choose Create Agent.
