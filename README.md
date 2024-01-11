@@ -69,7 +69,7 @@ pip install -r requirements.txt
         ]
     }
     ```
-  5. 
+  5. Create a role named AmazonBedrockExecutionRoleForAgents_workshop and attach the two policies we just created previously. 
 
 
 
