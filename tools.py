@@ -1,8 +1,9 @@
 import json
 
 import boto3
-from langchain.embeddings import BedrockEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import BedrockEmbeddings
+from langchain_community.vectorstores import FAISS
+
 
 
 bedrock_runtime = boto3.client(
@@ -10,11 +11,38 @@ bedrock_runtime = boto3.client(
     region_name="us-east-1",
 )
 
+def call_claude_sonnet(prompt):
+
+    prompt_config = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": 4096,
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                ],
+            }
+        ],
+    }
+
+    body = json.dumps(prompt_config)
+
+    modelId = "anthropic.claude-3-sonnet-20240229-v1:0"
+    accept = "application/json"
+    contentType = "application/json"
+
+    response = bedrock_runtime.invoke_model(
+        body=body, modelId=modelId, accept=accept, contentType=contentType
+    )
+    response_body = json.loads(response.get("body").read())
+
+    results = response_body.get("content")[0].get("text")
+    return results
 
 def claude_prompt_format(prompt: str) -> str:
     # Add headers to start and end of prompt
     return "\n\nHuman: " + prompt + "\n\nAssistant:"
-
 
 def call_claude(prompt):
     prompt_config = {
@@ -77,7 +105,7 @@ def aws_well_arch_tool(query):
 
     # Find docs
     embeddings = BedrockEmbeddings()
-    vectorstore = FAISS.load_local("local_index", embeddings)
+    vectorstore = FAISS.load_local("local_index", embeddings, allow_dangerous_deserialization=True)
     docs = vectorstore.similarity_search(query)
     context = ""
 
@@ -93,7 +121,7 @@ def aws_well_arch_tool(query):
     Question: {query}
     Answer:"""
 
-    generated_text = call_titan(prompt)
+    generated_text = call_claude_sonnet(prompt)
     print(generated_text)
 
     resp_string = (
@@ -109,5 +137,5 @@ def code_gen_tool(prompt):
     Use this tool only when you need to generate code based on a customers's request. The input is the customer's question. The tool returns code that the customer can use.
     """
     prompt_ending = " Just return the code, do not provide an explanation."
-    generated_text = call_claude(prompt + prompt_ending)
+    generated_text = call_claude_sonnet(prompt + prompt_ending)
     return generated_text

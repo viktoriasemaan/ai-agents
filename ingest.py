@@ -2,16 +2,16 @@ import xml.etree.ElementTree as ET
 
 import boto3
 import requests
-from langchain.document_loaders import SeleniumURLLoader
-from langchain.embeddings import BedrockEmbeddings
+from langchain_community.document_loaders import SeleniumURLLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import BedrockEmbeddings
+from langchain_community.vectorstores import FAISS
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 # Setup Chrome Driver, may need to change based on system
-service = Service("/usr/bin/chromedriver")
+service = Service("/usr/local/bin/chromedriver")
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--no-sandbox")
@@ -121,4 +121,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
