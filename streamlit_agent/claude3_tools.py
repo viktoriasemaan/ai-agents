@@ -15,7 +15,7 @@ from PIL import Image
 
 bedrock_runtime = boto3.client(
     service_name="bedrock-runtime",
-    region_name="us-east-1",
+    region_name="us-west-2",
 )
 
 
@@ -46,41 +46,6 @@ def pil_to_base64(image, format="png"):
 
 
 aws_service_to_module_mapping = load_json("diag_mapping.json")
-
-
-def call_claude_3(
-    system_prompt: str,
-    prompt: str,
-    model_id: str = "anthropic.claude-3-sonnet-20240229-v1:0",
-):
-
-    prompt_config = {
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 4096,
-        "system": system_prompt,
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt},
-                ],
-            }
-        ],
-    }
-
-    body = json.dumps(prompt_config)
-
-    modelId = model_id
-    accept = "application/json"
-    contentType = "application/json"
-
-    response = bedrock_runtime.invoke_model(
-        body=body, modelId=modelId, accept=accept, contentType=contentType
-    )
-    response_body = json.loads(response.get("body").read())
-
-    results = response_body.get("content")[0].get("text")
-    return results
 
 
 def call_claude_3(
@@ -294,7 +259,7 @@ def save_and_run_python_code(code: str, file_name: str = "/tmp/test_diag.py"):
     try:
         os.chdir("/tmp")
         result = subprocess.run(
-            ["python", file_name], capture_output=True, text=True, check=True
+            ["python3", file_name], capture_output=True, text=True, check=True
         )
         # go back...
     except subprocess.CalledProcessError as e:
