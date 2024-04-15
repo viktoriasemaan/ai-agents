@@ -3,7 +3,7 @@ import image_to_text as tools  # This import is correct
 
 st.title(f""":rainbow[Your Solutions Architect Assistant powered by Amazon Bedrock]""")
 
-st.header(":rainbow: Diagram Analysis provided by Claude 3")
+st.header(f""":rainbow[Explanation and Code generated using Claude 3 Sonnet]""")
 with st.container():
     st.subheader('Image File Upload:')
     File = st.file_uploader('Upload an Image', type=["png", "jpg", "jpeg"], key="diag")
@@ -14,7 +14,7 @@ with st.container():
 if result1:
     input_text = "You are a AWS solution architect. The image provided is an architecture diagram. Explain the technical data flow in detail."
 elif result2:
-    input_text = "You are a AWS solution architect. The image provided is an architecture diagram. Provide cloudformation code to implement this diagram to help me get started"
+    input_text = "Act as you as DevOps Engineer. Carefully analyze architecture on the image, identify all AWS services used and integration. For each service generate CloudFormation code, take your time and write Clouformation step-by-step. Do you best and don't apologize. Provide code only, no text."
 else:
     input_text = ""
 
