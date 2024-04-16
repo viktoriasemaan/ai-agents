@@ -1,0 +1,33 @@
+[1mProject:[0m project_i6kdfwb5
+
+ [4mName[0m                                                      [4mMonthly Qty[0m  [4mUnit[0m        [4mMonthly Cost[0m    
+                                                                                                    
+ [1maws_db_instance.rds_instance[0m                                                                       
+ [2m├─[0m Database instance (on-demand, Single-AZ, db.r5.large)          730  hours            $175.20    
+ [2m├─[0m Storage (general purpose SSD, gp2)                             100  GB                $11.50    
+ [2m├─[0m Additional backup storage                                      238  GB                $22.61  * 
+ [2m└─[0m Extended support (year 1)                                    1,460  vCPU-hours       $146.00    
+                                                                                                    
+ [1maws_instance.ec2_instances[0][0m                                                                      
+ [2m├─[0m Instance usage (Linux/UNIX, on-demand, m5.xlarge)              730  hours            $140.16    
+ [2m└─[0m root_block_device                                                                               
+ [2m   └─[0m Storage (general purpose SSD, gp2)                            8  GB                 $0.80    
+                                                                                                    
+ [1maws_instance.ec2_instances[1][0m                                                                      
+ [2m├─[0m Instance usage (Linux/UNIX, on-demand, m5.xlarge)              730  hours            $140.16    
+ [2m└─[0m root_block_device                                                                               
+ [2m   └─[0m Storage (general purpose SSD, gp2)                            8  GB                 $0.80    
+                                                                                                    
+[1m OVERALL TOTAL[0m                                                                           $637.23 
+
+*Usage costs were estimated with usage defaults from Infracost Cloud, which can also be overridden in this repo.
+
+──────────────────────────────────
+3 cloud resources were detected:
+∙ 3 were estimated
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Project                                            ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+┃ project_i6kdfwb5                                   ┃ $615          ┃ $23         ┃ $637       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
