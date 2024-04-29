@@ -1,9 +1,8 @@
 import json
+import os
+import subprocess
 import boto3
 from datetime import datetime
-
-
-
 
 
 bedrock_runtime = boto3.client('bedrock-runtime', 'us-west-2')
@@ -71,6 +70,7 @@ def call_claude_sonnet(prompt):
 
     results = response_body.get("content")[0].get("text")
     return results
+
 
 def claude_prompt_format(prompt: str) -> str:
     # Add headers to start and end of prompt
@@ -171,7 +171,7 @@ def iac_gen_tool(prompt):
     Use this tool only when you need to generate Infrastructure such as Terraform, CloudFormation scripts based on a customer's request.
     The input is the customer's question. The tool returns Terraform code that the customer can use.
     """
-    prompt_ending = "Act as you as DevOps Engineer. Carefully analyze customer requirements, identify all AWS services used and integration required for a solution. For each service generate Terraform code, take your time and write Terraform script step-by-step. Do your best and don't apologize. Provide code only, no text."
+    prompt_ending = "Act as you as DevOps Engineer. Carefully analyze customer requirements, identify all AWS services used and integration required for a solution. For each service generate Terraform code, take your time and write Terraform script step-by-step. Do your best and don't apologize. Provide code only, no comments or text, it have to be just code without additional annotation and special symbols."
     generated_text = call_claude_sonnet(prompt + prompt_ending)
     
     # Save to S3
@@ -189,4 +189,57 @@ def iac_gen_tool(prompt):
     
     return f"File saved to S3 bucket {bucket_name} at {s3_path}"
 
+def iac_cost_tool(prompt):
+    """
+    Estimate the cost of an AWS infrastructure using Infracost.
+    """
+    prompt_ending = "Given the estimated costs for an AWS cloud infrastructure, provide a breakdown of the monthly cost for each service. For services with multiple line items (e.g. RDS), aggregate the costs into a single total for that service. Present the cost analysis as a list, with each service and its corresponding monthly cost. Finally, include the total monthly cost for the entire infrastructure. The key optimizations:	- Clarify that the input is estimated costs, not raw infrastructure details. •	Simplify language around handling multiple line items for a service. -	Specify the desired list format for the output.  - Reduce repetition and remove unnecessary instructions (e.g. 'you do not need to give all calculations'). - Double-check all mathematical calculations to ensure accuracy. - Verify that the sum of individual service costs equals the reported total cost."
+    
+    # Get to S3
+    s3 = boto3.client('s3')
+    bucket_name = "bedrock-agent-generate-iac-estimate-cost"
+    prefix_code = "iac-code"
+    prefix_cost = "iac-cost"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"iac_cost_{timestamp}.tf"
+    local_dir = '/tmp/infracost-evaluate'
+    
+    # Create the local directory if it doesn't exist
+    os.makedirs(local_dir, exist_ok=True)
 
+    # List objects in the S3 folder sorted by LastModified in descending order
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix_code)
+    sorted_objects = sorted(objects['Contents'], key=lambda obj: obj['LastModified'], reverse=True)
+    
+    # Get the latest file key
+    latest_file_key = sorted_objects[0]['Key']
+    
+    # Download the latest file
+    local_file_path = os.path.join(local_dir, os.path.basename(latest_file_key))
+    s3.download_file(bucket_name, latest_file_key, local_file_path)
+    
+    # Generate timestamp-based file name
+    cost_filename = f"cost-evaluation-{timestamp}.txt"
+    cost_file_path = f"/tmp/{cost_filename}"
+    
+    # Run Infracost CLI command
+    infracost_cmd = f"infracost breakdown --path /tmp/infracost-evaluate > {cost_file_path}"
+    try:
+        subprocess.run(infracost_cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        # Read the result file even if the command returns a non-zero exit code
+        with open(cost_file_path, 'r') as f:
+            cost_file = f.read()
+        print(f"Infracost command returned non-zero exit code: {e.returncode}")
+        print(f"Result: {cost_file}")
+    else:
+        with open(cost_file_path, 'r') as f:
+            cost_file = f.read()
+        print(f"Result: {cost_file}")
+    
+    # Upload cost evaluation file to S3 under the "iac-cost" folder
+    s3_cost_result = os.path.join(prefix_cost, cost_filename)
+    s3.upload_file(cost_file_path, bucket_name, s3_cost_result)
+    
+    generated_text = call_claude_sonnet(cost_file + prompt_ending)
+    return generated_text
