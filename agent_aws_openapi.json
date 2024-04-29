@@ -6,7 +6,7 @@
         "description": "APIs helpeing customers with knowledge of AWS by querying the AWS Well-Architected Framework, writing code, and creating diagrams."
     },
     "paths": {
-        "/query_well_arch_framework": {
+        "/answer_query": {
             "get": {
                 "summary": "Query the the AWS Well-Architected Framework to answer a customer question.",
                 "description": "Query the the AWS Well-Architected Framework to answer a customer question. The API takes in the customer query then returns the answer and list of documents.",
@@ -42,11 +42,11 @@
                 }
             }
         },
-        "/gen_code": {
+        "/iac_gen": {
             "get": {
-                "summary": "Generate code for the customer",
-                "description": "Write code for the customer. The API takes in the customer query and returns the code for the customer.",
-                "operationId": "genCode",
+                "summary": "Generate IaC code for customer",
+                "description": "Write Terraform code for the client. The API takes in the customer query and returns the code for the customer.",
+                "operationId": "iac_gen_tool",
                 "parameters": [
                     {
                         "name": "query",
@@ -60,7 +60,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Code customer requested",
+                        "description": "Terraform code customer requested",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -69,6 +69,42 @@
                                         "code": {
                                             "type": "string",
                                             "description": "The code customer requested"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        "/iac_estimate_tool": {
+            "get": {
+                "summary": "Estimate infrastructure costs.",
+                "description": "Estimate the cost of infrastructure based on the generated Terraform code. The API takes the customer request and returns the code to the customer.",
+                "operationId": "iac_cost_tool",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "path",
+                        "description": "Customer query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estimate cost of infrastructure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "string",
+                                            "description": "The cost of the infrastructure based on the generated Terraform code."
                                         }
                                     }
                                 }

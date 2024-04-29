@@ -171,7 +171,7 @@ def iac_gen_tool(prompt):
     Use this tool only when you need to generate Infrastructure such as Terraform, CloudFormation scripts based on a customer's request.
     The input is the customer's question. The tool returns Terraform code that the customer can use.
     """
-    prompt_ending = "Act as you as DevOps Engineer. Carefully analyze customer requirements, identify all AWS services used and integration required for a solution. For each service generate Terraform code, take your time and write Terraform script step-by-step. Do your best and don't apologize. Provide code only, no comments or text, it have to be just code without additional annotation and special symbols."
+    prompt_ending = "Act as a DevOps Engineer. Carefully analyze the customer requirements provided and identify all AWS services and integrations needed for the solution. Generate the Terraform code required to provision and configure each AWS service, writing the code step-by-step. Provide only the final Terraform code, without any additional comments, explanations, markdown formatting, or special symbols. The key changes are: - Specify to only provide the final Terraform code at the end, no intermediate steps. - Explicitly state not to include any comments, explanations, markdown, or special symbols in the code.  - Remove the open-ended statements like 'take your time', 'do your best' and 'dont apologize' to keep the prompt focused."
     generated_text = call_claude_sonnet(prompt + prompt_ending)
     
     # Save to S3
@@ -193,9 +193,9 @@ def iac_cost_tool(prompt):
     """
     Estimate the cost of an AWS infrastructure using Infracost.
     """
-    prompt_ending = "Given the estimated costs for an AWS cloud infrastructure, provide a breakdown of the monthly cost for each service. For services with multiple line items (e.g. RDS), aggregate the costs into a single total for that service. Present the cost analysis as a list, with each service and its corresponding monthly cost. Finally, include the total monthly cost for the entire infrastructure. The key optimizations:	- Clarify that the input is estimated costs, not raw infrastructure details. •	Simplify language around handling multiple line items for a service. -	Specify the desired list format for the output.  - Reduce repetition and remove unnecessary instructions (e.g. 'you do not need to give all calculations'). - Double-check all mathematical calculations to ensure accuracy. - Verify that the sum of individual service costs equals the reported total cost."
+    prompt_ending = "Given the estimated costs for an AWS cloud infrastructure, provide a breakdown of the monthly cost for each service. For services with multiple line items (e.g. RDS), aggregate the costs into a single total for that service. Present the cost analysis as a list, with each service and its corresponding monthly cost. Finally, include the total monthly cost for the entire infrastructure. The key optimizations:	- Clarify that the input is estimated costs, not raw infrastructure details. -	Simplify language around handling multiple line items for a service. -	Specify the desired list format for the output.  - Reduce repetition and remove unnecessary instructions (e.g. 'you do not need to give all calculations'). - Double-check all mathematical calculations to ensure accuracy. - Verify that the sum of individual service costs equals the reported total cost."
     
-    # Get to S3
+    # Get terraform code from S3
     s3 = boto3.client('s3')
     bucket_name = "bedrock-agent-generate-iac-estimate-cost"
     prefix_code = "iac-code"
@@ -241,5 +241,5 @@ def iac_cost_tool(prompt):
     s3_cost_result = os.path.join(prefix_cost, cost_filename)
     s3.upload_file(cost_file_path, bucket_name, s3_cost_result)
     
-    generated_text = call_claude_sonnet(cost_file + prompt_ending)
+    generated_text = call_claude_sonnet(cost_file + prompt + prompt_ending)
     return generated_text
