@@ -7,11 +7,14 @@ def lambda_handler(event, context):
     # Download file from S3
     s3 = boto3.client('s3')
     bucket_name = 'vedmich-2024-04-16'
-    evaluate_folder_name = 'infracost-evaluate'
+    evaluate_folder_name = 'iac-code'
     local_dir = '/tmp/infracost-evaluate'
-    
+    # iac-cost
     # Create the local directory if it doesn't exist
     os.makedirs(local_dir, exist_ok=True)
+    
+    
+    ## get latest created file - last modied. 
     
     # List objects in the S3 folder
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=evaluate_folder_name)

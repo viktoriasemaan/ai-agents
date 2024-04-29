@@ -1,7 +1,7 @@
 import tools
 
 # test estimate_chost
-file_path = "./cost-result/cost-evaluation-2024-04-16-14-24-19.txt"
+file_path = "./cost-result/cost-reulst.txt"
 
 try:
     with open(file_path, "r") as file:
