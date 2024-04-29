@@ -3,7 +3,7 @@
     "info": {
         "title": "Agent AWS API",
         "version": "1.0.0",
-        "description": "APIs helpeing customers with knowledge of AWS by querying the AWS Well-Architected Framework, writing code, and creating diagrams."
+        "description": "APIs helpeing customers with knowledge of AWS by querying the AWS Well-Architected Framework, writing Terraform code."
     },
     "paths": {
         "/answer_query": {
@@ -77,12 +77,12 @@
                     }
                 }
             }
-        }
+        },
         "/iac_estimate_tool": {
             "get": {
                 "summary": "Estimate infrastructure costs.",
                 "description": "Estimate the cost of infrastructure based on the generated Terraform code. The API takes the customer request and returns the code to the customer.",
-                "operationId": "iac_cost_tool",
+                "operationId": "iac_estimate_tool",
                 "parameters": [
                     {
                         "name": "query",

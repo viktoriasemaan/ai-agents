@@ -29,9 +29,15 @@ def handler(event, context):
         # Create a response body with the result
         response_body = {"application/json": {"body": str(body)}}
         response_code = 200
-    elif api_path == "/gen_code":
+    elif api_path == "/iac_gen":
+        # Call the iac_gen_tool from the tools module with the query
+        body = tools.iac_gen_tool(query)
+        # Create a response body with the result
+        response_body = {"application/json": {"body": str(body)}}
+        response_code = 200
+    elif api_path == "/iac_estimate_tool":
         # Call the code_gen_tool from the tools module with the query
-        body = tools.code_gen_tool(query)
+        body = tools.iac_estimate_tool(query)
         # Create a response body with the result
         response_body = {"application/json": {"body": str(body)}}
         response_code = 200

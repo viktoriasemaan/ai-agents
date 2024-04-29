@@ -9,5 +9,5 @@ query = "Provide configuration steps with all the services outlined to build sim
 print(tools.iac_gen_tool(query))
 
 # test iac_cost_estimation_tool
-# query = "Recommend where I can save costs. "
-# print(tools.iac_cost_tool(query))
+query = "Recommend where I can save costs. "
+print(tools.iac_estimate_tool(query))

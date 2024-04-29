@@ -189,7 +189,7 @@ def iac_gen_tool(prompt):
     
     return f"File saved to S3 bucket {bucket_name} at {s3_path}"
 
-def iac_cost_tool(prompt):
+def iac_estimate_tool(prompt):
     """
     Estimate the cost of an AWS infrastructure using Infracost.
     """
