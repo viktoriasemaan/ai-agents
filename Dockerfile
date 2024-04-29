@@ -26,7 +26,6 @@ RUN pip install -U boto3 botocore
 # Copy function code
 COPY index.py ${LAMBDA_TASK_ROOT}
 COPY tools.py ${LAMBDA_TASK_ROOT}
-COPY local_index ${LAMBDA_TASK_ROOT}/local_index
 
 # Set the CMD to your handler
 CMD [ "index.handler" ]
