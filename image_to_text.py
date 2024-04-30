@@ -25,7 +25,7 @@ def image_base64_encoder(image_name):
 
 def image_to_text(image_name, text) -> str:
     file_type, image_base64 = image_base64_encoder(image_name)
-    system_prompt = """Carefully analyze this image, take your time, be extremely thorough and detailed. Then explain configuration of this diagram step-by-step as information flows. 
+    system_prompt = """You are an AWS Solutions Architect. The image you've received is an architecture diagram. Please explain the technical data flow in detail, step-by-step, and identify each AWS service used in the diagram.
 
     If a more specific question is presented by the user, make sure to prioritize that answer.
     """
@@ -67,7 +67,7 @@ def image_to_text(image_name, text) -> str:
     
     # Replace 'path_to_your_image.jpg' with the actual path to your image file
 image_path = 'image.jpeg'
-text_input = "desribe this architecture diagram in details"  # You can put specific instructions here if needed
+text_input = "You are an AWS Solutions Architect. The image you've received is an architecture diagram. Please explain the technical data flow in detail, step-by-step, and identify each AWS service used in the diagram."  # You can put specific instructions here if needed
 
 # Call the function
 output_text = image_to_text(image_path, text_input)
