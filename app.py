@@ -14,9 +14,9 @@ with st.container():
     result2 = st.button("Generate Terraform")
     
 if result1:
-    input_text = "You are a AWS solution architect. The image provided is an architecture diagram. Explain the technical data flow in detail."
+    input_text = "You are an AWS Solutions Architect. The image you've received is an architecture diagram. Please explain the technical data flow in detail, step-by-step, and identify each AWS service used in the diagram."
 elif result2:
-    input_text = "Act as you as DevOps Engineer. Carefully analyze architecture on the image, identify all AWS services used and integration. For each service generate Terraform code, take your time and write Terraform script step-by-step. Do you best and don't apologize. Provide code only, no text."
+    input_text = "Act as a DevOps Engineer. Carefully analyze the architecture in the image, identify all AWS services used, and their integration. For each service, generate Terraform code. Take your time and write the Terraform script step-by-step. Do your best and don't apologize. Provide code only, no text."
 else:
     input_text = ""
 

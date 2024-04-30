@@ -1,3 +1,5 @@
+knowledge_base_id="EFSEVHIJBA"
+
 import json
 import os
 import subprocess
@@ -9,7 +11,7 @@ bedrock_runtime = boto3.client('bedrock-runtime', 'us-west-2')
 bedrock_agent_runtime = boto3.client('bedrock-agent-runtime','us-west-2')
 
 
-knowledge_base_id="JLSE7CCLNC"
+
 
 
 
@@ -117,7 +119,7 @@ def answer_query(user_input):
     # Configuring the Prompt for the LLM
     # TODO: EDIT THIS PROMPT TO OPTIMIZE FOR YOUR USE CASE
     prompt_data = """
-    You are a Question and answering assistant and your responsibility is to answer user questions based on provided context
+    You are an AWS Solutions Architect and your responsibility is to answer user questions based on provided context
     
     Here is the context to reference:
     <context>
