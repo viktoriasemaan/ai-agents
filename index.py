@@ -23,9 +23,9 @@ def handler(event, context):
     print(f"Query: {query}")
 
     # Check the api path to determine which tool function to call
-    if api_path == "/query_well_arch_framework":
-        # Call the aws_well_arch_tool from the tools module with the query
-        body = tools.aws_well_arch_tool(query)
+    if api_path == "/answer_query":
+        # Call the answer_query from the tools module with the query
+        body = tools.answer_query(query)
         # Create a response body with the result
         response_body = {"application/json": {"body": str(body)}}
         response_code = 200
