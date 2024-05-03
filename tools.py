@@ -6,14 +6,8 @@ import subprocess
 import boto3
 from datetime import datetime
 
-
 bedrock_runtime = boto3.client('bedrock-runtime', 'us-west-2')
 bedrock_agent_runtime = boto3.client('bedrock-agent-runtime','us-west-2')
-
-
-
-
-
 
 def get_contexts(query, kbId, numberOfResults=5):
     """
@@ -73,7 +67,6 @@ def call_claude_sonnet(prompt):
     results = response_body.get("content")[0].get("text")
     return results
 
-
 def claude_prompt_format(prompt: str) -> str:
     # Add headers to start and end of prompt
     return "\n\nHuman: " + prompt + "\n\nAssistant:"
@@ -101,7 +94,6 @@ def call_claude(prompt):
 
     results = response_body.get("completion")
     return results
-
 
 def answer_query(user_input):
     """
@@ -167,13 +159,12 @@ def answer_query(user_input):
     # returning the final string to the end user
     return answer
 
-
 def iac_gen_tool(prompt):
     """
     Use this tool only when you need to generate Infrastructure such as Terraform, CloudFormation scripts based on a customer's request.
     The input is the customer's question. The tool returns Terraform code that the customer can use.
     """
-    prompt_ending = "Act as a DevOps Engineer. Carefully analyze the customer requirements provided and identify all AWS services and integrations needed for the solution. Generate the Terraform code required to provision and configure each AWS service, writing the code step-by-step. Provide only the final Terraform code, without any additional comments, explanations, markdown formatting, or special symbols. The key changes are: - Specify to only provide the final Terraform code at the end, no intermediate steps. - Explicitly state not to include any comments, explanations, markdown, or special symbols in the code.  - Remove the open-ended statements like 'take your time', 'do your best' and 'dont apologize' to keep the prompt focused."
+    prompt_ending = "Act as a DevOps Engineer. Carefully analyze the customer requirements provided and identify all AWS services and integrations needed for the solution. Generate the Terraform code required to provision and configure each AWS service, writing the code step-by-step. Provide only the final Terraform code, without any additional comments, explanations, markdown formatting, or special symbols. The key changes are: - Specify to only provide the final Terraform code at the end, no intermediate steps. - Explicitly state not to include any comments, explanations, markdown, or special symbols in the code.  - Remove the open-ended statements like 'take your time', 'do your best' and 'dont apologize' to keep the prompt focused. - Remove from the final file ``` and ```hcl symbols, save only terraform code on the final file."
     generated_text = call_claude_sonnet(prompt + prompt_ending)
     
     # Save to S3
