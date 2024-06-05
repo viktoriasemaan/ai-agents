@@ -3,13 +3,13 @@
     "info": {
         "title": "Agent AWS API",
         "version": "1.0.0",
-        "description": "APIs helpeing customers with knowledge of AWS by querying the AWS Well-Architected Framework, writing Terraform code."
+        "description": "APIs helping customers with knowledge of AWS by querying the AWS Well-Architected Framework, writing Terraform code."
     },
     "paths": {
         "/answer_query": {
             "get": {
-                "summary": "Query the the AWS Well-Architected Framework to answer a customer question.",
-                "description": "Query the the AWS Well-Architected Framework to answer a customer question. The API takes in the customer query then returns the answer and list of documents.",
+                "summary": "Query the AWS Well-Architected Framework to answer a customer question.",
+                "description": "Query the AWS Well-Architected Framework to answer a customer question. The API takes in the customer query then returns the answer and a list of documents.",
                 "operationId": "queryWellArch",
                 "parameters": [
                     {
@@ -21,10 +21,10 @@
                             "type": "string"
                         }
                     }
-                ],                
+                ],
                 "responses": {
                     "200": {
-                        "description": "Query the the AWS Well-Architected Framework to answer a customer question.",
+                        "description": "Response containing the answer to the customer query and a list of documents.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -32,7 +32,7 @@
                                     "properties": {
                                         "answer": {
                                             "type": "string",
-                                            "description": "The response to customer query and list of documents cited."
+                                            "description": "The response to the customer query and list of documents cited."
                                         }
                                     }
                                 }
@@ -44,8 +44,8 @@
         },
         "/iac_gen": {
             "get": {
-                "summary": "Generate IaC code for customer",
-                "description": "Write Terraform code for the client. The API takes in the customer query and returns the code for the customer.",
+                "summary": "Generate IaC code for the customer",
+                "description": "Write Terraform code for the customer. The API takes in the customer query and returns the code for the customer.",
                 "operationId": "iac_gen_tool",
                 "parameters": [
                     {
@@ -60,7 +60,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Terraform code customer requested",
+                        "description": "The Terraform code requested by the customer.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -68,7 +68,7 @@
                                     "properties": {
                                         "code": {
                                             "type": "string",
-                                            "description": "The code customer requested"
+                                            "description": "The Terraform code requested by the customer."
                                         }
                                     }
                                 }
@@ -81,7 +81,7 @@
         "/iac_estimate_tool": {
             "get": {
                 "summary": "Estimate infrastructure costs.",
-                "description": "Estimate the cost of infrastructure based on the generated Terraform code. The API takes the customer request and returns the code to the customer.",
+                "description": "Estimate the cost of infrastructure based on the generated Terraform code. The API takes the customer request and returns the estimated cost.",
                 "operationId": "iac_estimate_tool",
                 "parameters": [
                     {
@@ -96,7 +96,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Estimate cost of infrastructure",
+                        "description": "Estimated cost of the infrastructure based on the generated Terraform code.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -104,7 +104,7 @@
                                     "properties": {
                                         "code": {
                                             "type": "string",
-                                            "description": "The cost of the infrastructure based on the generated Terraform code."
+                                            "description": "The estimated cost of the infrastructure based on the generated Terraform code."
                                         }
                                     }
                                 }
