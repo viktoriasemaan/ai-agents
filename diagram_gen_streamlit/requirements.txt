@@ -1,6 +1,0 @@
-streamlit
-langchain-community
-langchain
-faiss-cpu
-boto3
-pillow
