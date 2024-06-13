@@ -10,15 +10,18 @@ Welcome to this repository on building Generative AI Agents using Amazon Bedrock
 
 This repo includes tutorial for the following solutions:
 
-1. Create Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
-2. Build AI-powered app to analyze and explain diagrams utilzing Amazon Bedrock & Streamlit 
-3. Develop AI Agents using Amazon Bedrock
+1. Tool 1- Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
+2. Tool 2- Explain diagrams and generate IaC utilizing multimodal LLM Claude 3
+3. Tool 3 - Estimate Cost using InfraCost
+4. Develop AI Agent using Amazon Bedrock
 
 
 By the end of this tutorial, you will learn how to create an Amazon Bedrock Agent that can assist with querying the AWS documentation, suggest and explain AWS solutions, generate Infrastructure as Code (IaC), and estimate monthly cost to run a solution on AWS.
 
 
-![Agent Helpful Example](/images/image01_ sa_overview.png)
+<div align="center">
+    <img src="image01_ sa_overview.png" width="600">
+</div>
 
 Prerequisites:
 - Basic Python coding skills
