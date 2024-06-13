@@ -8,17 +8,17 @@ This repository is complementary to breakout session on "Building an AWS Solutio
 
 Welcome to this repository on building Generative AI Agents using Amazon Bedrock! 
 
-- Create end-to-end Retrieval-Augmented Generation (RAG) systems with Knowledge Bases for Amazon Bedrock
-- Build AI-powered applications utilizing Amazon Bedrock with multimodal Large Language Models (LLMs)
-- Develop AI Agents using Amazon Bedrock
+This repo includes tutorial for the following solutions:
+
+1. Create Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
+2. Build AI-powered app to analyze and explain diagrams utilzing Amazon Bedrock & Streamlit 
+3. Develop AI Agents using Amazon Bedrock
 
 
-By the end of this tutorial, participants will construct a Bedrock Agent that can assist with querying the AWS documentation, suggesting configurations of AWS solutions to solve a business problem, and estimating the monthly cost to run them on AWS.
-
-This repository contains code for the session "Building an AWS Solutions Architect agent with Amazon Bedrock
+By the end of this tutorial, you will learn how to create an Amazon Bedrock Agent that can assist with querying the AWS documentation, suggest and explain AWS solutions, generate Infrastructure as Code (IaC), and estimate monthly cost to run a solution on AWS.
 
 
-![Agent Helpful Example](/images/image 01 - SA overview.png)
+![Agent Helpful Example](/images/image01_ sa_overview.png)
 
 Prerequisites:
 - Basic Python coding skills
