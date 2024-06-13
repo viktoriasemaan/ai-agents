@@ -20,7 +20,7 @@ By the end of this tutorial, you will learn how to create an Amazon Bedrock Agen
 
 
 <div align="center">
-    <img src="image01_ sa_overview.png" width="600">
+    <img src="image01_sa_overview.png" width="600">
 </div>
 
 Prerequisites:
