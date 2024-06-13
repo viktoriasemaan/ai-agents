@@ -11,7 +11,7 @@ Welcome to this repository on building Generative AI Agents using Amazon Bedrock
 This repo includes tutorial for the following solutions:
 
 1. Tool 1- Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
-2. Tool 2- Explain diagrams and generate IaC utilizing multimodal LLM Claude 3
+2. Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3) 
 3. Tool 3 - Estimate Cost using InfraCost
 4. Configure AI Agent using Amazon Bedrock
 
@@ -20,7 +20,7 @@ By the end of this tutorial, you will learn how to create an Amazon Bedrock Agen
 
 
 <div align="center">
-    <img src="image01_sa_overview.png" width="600">
+    <img src="images/image01_ sa_overview.png" width="600">
 </div>
 
 Prerequisites:
@@ -28,7 +28,7 @@ Prerequisites:
 - Experience with AWS Console
 - Familiarity with core AWS services (Lambda, IAM, )
 
-## Prerequisites
+## Prerequisite Steps
 
 This workshop assumes you are working in an environment with access to [Python 3.9](https://www.python.org/getit/) and [Docker](https://www.docker.com/)
 
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 Viktoria writes the steps
 
 
-## Tool 2- Explain diagrams and generate IaC utilizing multimodal LLM Claude 3
+## Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 
 Viktoria writes the steps
 
@@ -61,7 +61,7 @@ Viktoria writes the steps
 
 Viktor writes the steps
 
-## Configure AI Agent using Amazon Bedrock\
+## Configure AI Agent using Amazon Bedrock
 
 Viktor writes the steps
 
