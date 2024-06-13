@@ -1,16 +1,29 @@
-# Amazon Bedrock Agents Quickstart
+# Demos and samples for Building an AWS Solutions Architect agent with Amazon Bedrock (Berlin Summit BOA305)
 
-Welcome to our hands-on workshop on building Generative AI Agents using Amazon Bedrock Agents. In this interactive session, you will learn how to harness the power of AI agents and tools to build an AI-powered AWS Solution Architect dubbed "Agent AWS".
+This repository is complementary to breakout session on "Building an AWS Solutions Architect agent with Amazon Bedrock" at the [AWS Berlin Summit 2024](https://aws.amazon.com/events/summits/emea/berlin/)
 
-![Agent Helpful Example](/images/agent_helps.png)
+🎥 Watch the session [here](https://bit.ly/boa305-berlin)
 
-Over the course of this workshop, participants will construct a Bedrock Agent that can assist with querying the AWS Well-Architected Framework and generating code.
+[!["BOA305"](http://img.youtube.com/vi/8ftKjZyaqNk/0.jpg)](https://www.youtube.com/watch?v=8ftKjZyaqNk "BOA305")
 
-By the end of this workshop, you will have gained valuable hands-on experience in building agents.
+Welcome to this repository on building Generative AI Agents using Amazon Bedrock! 
 
-![Agent Architecture Diagram](/images/agent_arch.png)
+- Create end-to-end Retrieval-Augmented Generation (RAG) systems with Knowledge Bases for Amazon Bedrock
+- Build AI-powered applications utilizing Amazon Bedrock with multimodal Large Language Models (LLMs)
+- Develop AI Agents using Amazon Bedrock
 
-This is a 300-level workshop, so some familiarly with Python and using services such as Lambda and Elastic Container Registry is helpful. No AI/ML experience is necessary. This workshop is intended to be finished within 2 hours.
+
+By the end of this tutorial, participants will construct a Bedrock Agent that can assist with querying the AWS documentation, suggesting configurations of AWS solutions to solve a business problem, and estimating the monthly cost to run them on AWS.
+
+This repository contains code for the session "Building an AWS Solutions Architect agent with Amazon Bedrock
+
+
+![Agent Helpful Example](/images/image 01 - SA overview.png)
+
+Prerequisites:
+- Basic Python coding skills
+- Experience with AWS Console
+- Familiarity with core AWS services (Lambda, IAM, )
 
 ## Prerequisites
 
