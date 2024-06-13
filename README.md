@@ -13,7 +13,7 @@ This repo includes tutorial for the following solutions:
 1. Tool 1- Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
 2. Tool 2- Explain diagrams and generate IaC utilizing multimodal LLM Claude 3
 3. Tool 3 - Estimate Cost using InfraCost
-4. Develop AI Agent using Amazon Bedrock
+4. Configure AI Agent using Amazon Bedrock
 
 
 By the end of this tutorial, you will learn how to create an Amazon Bedrock Agent that can assist with querying the AWS documentation, suggest and explain AWS solutions, generate Infrastructure as Code (IaC), and estimate monthly cost to run a solution on AWS.
@@ -30,15 +30,14 @@ Prerequisites:
 
 ## Prerequisites
 
-This workshop assumes you are working in an environment with access to [Python 3.9](https://www.python.org/getit/) or later and [Docker](https://www.docker.com/). 
+This workshop assumes you are working in an environment with access to [Python 3.9](https://www.python.org/getit/) and [Docker](https://www.docker.com/)
 
-## Setting up your local Environment
 
 1. **Clone the Repository:** Start by cloning the provided repository which contains the code for our agent.
 
 ```bash
-git clone https://github.com/build-on-aws/amazon-bedrock-agents-quickstart.git
-cd amazon-bedrock-agents-quickstart
+git clone https://github.com/viktoriasemaan/ai-agents.git
+cd ai-agents
 ```
 
 2. **Install Dependencies:** Run the appropriate pip install command to download necessary packages.
@@ -47,11 +46,39 @@ cd amazon-bedrock-agents-quickstart
 pip install -r requirements.txt
 ```
 
-3. **(Optional) Enable Amazon CodeWhisperer:** Activate Amazon's CodeWhisperer, your AI assistant that will guide you through coding. Watch this video to learn how to install it in your environment.
 
-[![Amazon CodeWhisperer](https://img.youtube.com/vi/sFh3_cMUrMk/0.jpg)](https://www.youtube.com/watch?v=sFh3_cMUrMk)
+## Tool 1- Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
 
-## Create the IAM roles
+
+Viktoria writes the steps
+
+
+## Tool 2- Explain diagrams and generate IaC utilizing multimodal LLM Claude 3
+
+Viktoria writes the steps
+
+## Tool 3 - Estimate Cost using InfraCost
+
+Viktor writes the steps
+
+## Configure AI Agent using Amazon Bedrock\
+
+Viktor writes the steps
+
+
+
+
+
+
+
+
+
+from old tutorial
+
+
+
+
+### Create the IAM roles
 
 1. In your console, go to your [IAM Dashboard](https://us-east-1.console.aws.amazon.com/iam/).
 2. Go to Policies in the right-hand side menu.
@@ -86,10 +113,6 @@ pip install -r requirements.txt
     }
     ```
   5. Create a role named AmazonBedrockExecutionRoleForAgents_workshop and attach the two policies we just created previously. 
-
-
-
-## Building an Agent
 
 To get started with the agent, open the Bedrock console, select Agents in the left navigation panel, then choose Create Agent.
 
