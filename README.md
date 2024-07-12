@@ -6,24 +6,23 @@ This repository is complementary to breakout session on "Building an AWS Solutio
 
 [!["BOA305"](http://img.youtube.com/vi/8ftKjZyaqNk/0.jpg)](https://www.youtube.com/watch?v=8ftKjZyaqNk "BOA305")
 
-Welcome to this repository on building Generative AI Agents using Amazon Bedrock! 
+Welcome to this repository on building Generative AI Agents using Amazon Bedrock!
 
 This repo includes tutorial for the following solutions:
 
 1. Tool 1- Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
-2. Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3) 
+2. Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 3. Tool 3 - Estimate Cost using InfraCost
 4. Configure AI Agent using Amazon Bedrock
 
-
-By the end of this tutorial, you will learn how to create an Amazon Bedrock Agent that can assist with querying the AWS documentation, suggest and explain AWS solutions, generate Infrastructure as Code (IaC), and estimate monthly cost to run a solution on AWS. 
-
+By the end of this tutorial, you will learn how to create an Amazon Bedrock Agent that can assist with querying the AWS documentation, suggest and explain AWS solutions, generate Infrastructure as Code (IaC), and estimate monthly cost to run a solution on AWS.
 
 <div align="center">
     <img src="images/image01_ sa_overview.png" width="600">
 </div>
 
 Prerequisites:
+
 - Basic Python coding skills
 - Experience with AWS Console
 - Familiarity with core AWS services (Lambda, IAM, )
@@ -31,7 +30,6 @@ Prerequisites:
 ## Prerequisite Steps
 
 This workshop assumes you are working in an environment with access to [Python 3.9](https://www.python.org/getit/) and [Docker](https://www.docker.com/)
-
 
 1. **Clone the Repository:** Start by cloning the provided repository which contains the code for our agent.
 
@@ -46,12 +44,74 @@ cd ai-agents
 pip install -r requirements.txt
 ```
 
-
 ## Tool 1- Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
 
+This tool aims to demonstrate how quickly a Knowledge Base or Retrieval Augmented Generation (RAG) system can be created. It enriches standard user requests with new information uploaded to the knowledge base.
 
-Viktoria writes the steps
+In our case, we will upload the latest published AWS whitepapers and references architecture diagrams to the knowledge base. This will allow the tool to provide answers as a solution architect by retrieving relevant information from the documentation.
 
+RAG optimizes the output of a large language model by referencing an authoritative knowledge base. It compares embeddings of user queries to the knowledge library vector, appending the original prompt with relevant information to generate an informed response.
+
+<div align="center">
+    <img src="images/image02_rag_in_action.png" width="600">
+</div>
+
+#### 1. Download Reference Architecture Diagrams
+First, download the latest reference architecture diagrams from [AWS Reference Architecture Diagrams](https://aws.amazon.com/architecture/reference-architecture-diagrams) and upload them to your S3 bucket named `knowledge-base-bedrock-agent`.
+
+#### 2. Create a Knowledge Base on Bedrock
+Navigate to the Amazon Bedrock service. Under Builder Tools, select Knowledge Bases and create a new one.
+
+#### 3. Configure Permissions
+During the configuration, you need to set permissions for the job. This includes access to S3 and other services.
+
+#### 4. Choose Data Source
+Select your data source. Options include:
+- S3 bucket (our case)
+- Web Crawler
+- Confluence
+- Salesforce
+- SharePoint
+
+<div align="center">
+    <img src="images/image03_data_source.png" width="600">
+</div>
+
+#### 5. Define S3 Document Location
+Specify the location of your documents in the S3 bucket.
+
+#### 6. Select Embeddings Model and Configure Vector Store
+Choose the embedding model. Options include Amazon's Titan or Cohere. For our demo, we'll use Titan for embedding and OpenSearch as the vector store.
+<div align="center">
+    <img src="images/image04_embeddins.png" width="600">
+</div>
+
+#### 7. Review Configuration
+Review all your configurations and wait a few minutes for the setup to complete.
+
+#### 8. Test Your Knowledge Base
+Extend the configuration window to set up your chat and select the model (Claude 3 Sonnet).
+
+#### 9. Adjust Prompt Template
+In the "Knowledge Base Prompt Template" section, adjust the prompt to act as an AWS Solution Architect.
+    
+<div align="center">
+    <img src="images/image05_prompt.png" width="600">
+</div>    
+
+#### 10. Test the Knowledge Base
+Test your knowledge base with the question: "Tell me about zero-ETL with Aura and Redshift?" You should receive a response with references to the information sources.
+
+<div align="center">
+    <img src="images/image06_reference.png" width="600">
+</div>
+
+#### 11. Working with the Knowledge Base through the Agent
+
+To work with the Knowledge Base using the agent, we need to get context from the user. The `get_contexts` function helps us with this by calling the foundation model with additional context, which is our knowledge base. This is implemented in the `answer_query` function. 
+To test this functionality, use the `test_tools.py` file. Uncomment the section `test answer_query` to run the test.
+
+This tool, SA Q&A, helps quickly find information not available in the default foundation model. For example, it can provide the latest details on zero-ETL with Aurora and RedShift. The next step is to assist with big architecture diagrams and generate Infrastructure as Code (IaC) for the MVP.
 
 ## Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 
@@ -65,24 +125,14 @@ Viktor writes the steps
 
 Viktor writes the steps
 
-
-
-
-
-
-
-
-
 ## from old tutorial (DELETE LATER)
-
-
-
 
 ### Create the IAM roles
 
 1. In your console, go to your [IAM Dashboard](https://us-east-1.console.aws.amazon.com/iam/).
 2. Go to Policies in the right-hand side menu.
 3. Create one policie named for example Bedrock-InvokeModel-Policy
+
    ```json
    {
     "Version": "2012-10-17",
@@ -98,7 +148,9 @@ Viktor writes the steps
         ]
     }
    ```
-  4. Create one policie named for example Bedrock-S3-GetObject
+
+4. Create one policie named for example Bedrock-S3-GetObject
+
     ```json
     {
         "Version": "2012-10-17",
@@ -112,7 +164,8 @@ Viktor writes the steps
         ]
     }
     ```
-  5. Create a role named AmazonBedrockExecutionRoleForAgents_workshop and attach the two policies we just created previously. 
+
+5. Create a role named AmazonBedrockExecutionRoleForAgents_workshop and attach the two policies we just created previously.
 
 To get started with the agent, open the Bedrock console, select Agents in the left navigation panel, then choose Create Agent.
 
@@ -123,6 +176,7 @@ This starts the agent creation workflow.
 1. Provide agent details including agent name, description, whether the agent is allowed to request additional user inputs, and choose the IAM role created earlier.
 
 Here is what I used for this Agent
+
 ```
 Agent-AWS
 
@@ -135,7 +189,7 @@ Agent AWS is an automated, AI-powered agent that helps customers with knowledge 
 
 ![Agent Model](/images/agent_model.png)
 
-3. Skip the Add Action Groups and create an Agent. 
+3. Skip the Add Action Groups and create an Agent.
 
 ![Agent Model](/images/agent_create.png)
 
@@ -158,6 +212,7 @@ To learn more about how the data was collected and embeddings read this [blog po
 The code used to collect the data is in `ingest.py`
 
 ### Code Generation Tool
+
 The code for this tool, uses a call to the Claude-V2 model to generate code based on a user's request.
 
 ### Testing tools
@@ -200,6 +255,7 @@ def upload_file_to_s3(file_name, bucket, object_name=None):
     s3_client.upload_file(file_name, bucket, object_name)
 ...    
 ```
+
 Feel free to play around with the prompts by editing `test_tools.py`
 
 ## Building the Lambda Function
@@ -220,7 +276,7 @@ Once the repo is created, follow the instructions in the `View push commands` bu
 
 2. Chose Container image then provide the `Function name` (berdock_sa_tools) and for the `Container image URI` select the container you uploaded.
 
-3. Click on Create function button in the bottom of the page 
+3. Click on Create function button in the bottom of the page
 
 ### Update Lambda Permissions
 
@@ -235,6 +291,7 @@ Once the repo is created, follow the instructions in the `View push commands` bu
 ![Lambda Permissions](/images/lambda_perms_2.png)
 
 4. Add the following Policy Statement to your Execution role, so Lambda can call Bedrock. (Details [here](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_manage-attach-detach.html#add-policies-console))
+
 ```json
 {
     "Version": "2012-10-17",
@@ -321,7 +378,6 @@ Now the agent will be much more helpful than it was prior to adding an action gr
 
 Try out some different prompts, and test the limits of the agent. Happy building!
 
-
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
@@ -329,4 +385,3 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
-
