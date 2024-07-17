@@ -115,7 +115,17 @@ This tool, SA Q&A, helps quickly find information not available in the default f
 
 ## Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 
-Viktoria writes the steps
+Out next tool will help us to generate IaC code when we need to MPV, but before we jump in to IaC generation. Claude 3 has good capacilities with analizing images, so we can use it to help us understand what's going on the architecture diagram and explain it. 
+
+### Explain diagrams and test different models
+
+### 1. Open chat playground
+To test any foundation model you can use chat playground, when you open the playground fist of all you need to select the model. We need to choose Claude 3 Sonnet. 
+
+### 2. Open another model on the same playground 
+Depending on situation you ca
+### 2. Upload image and define the prompt
+Now you can upload any architecture diagram and 
 
 ## Tool 3 - Estimate Cost using InfraCost
 
