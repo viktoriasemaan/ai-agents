@@ -57,15 +57,19 @@ RAG optimizes the output of a large language model by referencing an authoritati
 </div>
 
 #### 1. Download Reference Architecture Diagrams
+
 First, download the latest reference architecture diagrams from [AWS Reference Architecture Diagrams](https://aws.amazon.com/architecture/reference-architecture-diagrams) and upload them to your S3 bucket named `knowledge-base-bedrock-agent`.
 
 #### 2. Create a Knowledge Base on Bedrock
+
 Navigate to the Amazon Bedrock service. Under Builder Tools, select Knowledge Bases and create a new one.
 
 #### 3. Configure Permissions
+
 During the configuration, you need to set permissions for the job. This includes access to S3 and other services.
 
 #### 4. Choose Data Source
+
 Select your data source. Options include:
 - S3 bucket (our case)
 - Web Crawler
@@ -78,28 +82,34 @@ Select your data source. Options include:
 </div>
 
 #### 5. Define S3 Document Location
+
 Specify the location of your documents in the S3 bucket.
 
 #### 6. Select Embeddings Model and Configure Vector Store
+
 Choose the embedding model. Options include Amazon's Titan or Cohere. For our demo, we'll use Titan for embedding and OpenSearch as the vector store.
 <div align="center">
     <img src="images/image04_embeddins.png" width="600">
 </div>
 
 #### 7. Review Configuration
+
 Review all your configurations and wait a few minutes for the setup to complete.
 
 #### 8. Test Your Knowledge Base
+
 Extend the configuration window to set up your chat and select the model (Claude 3 Sonnet).
 
 #### 9. Adjust Prompt Template
+
 In the "Knowledge Base Prompt Template" section, adjust the prompt to act as an AWS Solution Architect.
-    
+
 <div align="center">
     <img src="images/image05_prompt.png" width="600">
-</div>    
+</div>
 
 #### 10. Test the Knowledge Base
+
 Test your knowledge base with the question: "Tell me about zero-ETL with Aura and Redshift?" You should receive a response with references to the information sources.
 
 <div align="center">
@@ -108,24 +118,82 @@ Test your knowledge base with the question: "Tell me about zero-ETL with Aura an
 
 #### 11. Working with the Knowledge Base through the Agent
 
-To work with the Knowledge Base using the agent, we need to get context from the user. The `get_contexts` function helps us with this by calling the foundation model with additional context, which is our knowledge base. This is implemented in the `answer_query` function. 
+To work with the Knowledge Base using the agent, we need to get context from the user. The `get_contexts` function helps us with this by calling the foundation model with additional context, which is our knowledge base. This is implemented in the `answer_query` function.
 To test this functionality, use the `test_tools.py` file. Uncomment the section `test answer_query` to run the test.
 
 This tool, SA Q&A, helps quickly find information not available in the default foundation model. For example, it can provide the latest details on zero-ETL with Aurora and RedShift. The next step is to assist with big architecture diagrams and generate Infrastructure as Code (IaC) for the MVP.
 
 ## Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 
-Out next tool will help us to generate IaC code when we need to MPV, but before we jump in to IaC generation. Claude 3 has good capacilities with analizing images, so we can use it to help us understand what's going on the architecture diagram and explain it. 
+Out next tool will help us to generate IaC code when we need to MPV, but before we jump in to IaC generation. Claude 3 has good capacilities with analizing images, so we can use it to help us understand what's going on the architecture diagram and explain it.
 
-### Explain diagrams and test different models
+### Explain Diagrams and Test Different Models
 
-### 1. Open chat playground
-To test any foundation model you can use chat playground, when you open the playground fist of all you need to select the model. We need to choose Claude 3 Sonnet. 
+#### 1. Open Chat Playground
 
-### 2. Open another model on the same playground 
-Depending on situation you ca
-### 2. Upload image and define the prompt
-Now you can upload any architecture diagram and 
+To test any foundation model, you can use the chat playground. When you open the playground, first select the model. We need to choose Claude 3 Sonnet.
+
+#### 2. Open Another Model on the Same Playground
+
+Our goal is to compare Claude 3 Sonnet with Claude 3 Haiku. So, select Claude 3 Haiku on the other side of the playground.
+
+<div align="center">
+    <img src="images/image07_playground.png" width="600">
+</div>
+
+#### 3. Upload Image and Define the Prompt
+
+Now, you can upload any architecture diagram. We will use a legacy version of an e-commerce application. This will add an additional challenge for our comparison.
+
+<div align="center">
+    <img src="images/image08_diagramm.png" width="600">
+</div>
+
+#### 4. Compare Results
+
+As a result, we can compare the metrics from both models and also the responses from the models.
+
+<div align="center">
+    <img src="images/image09_comparemodels.png" width="600">
+</div>
+
+Based on this comparison, we will see that in our case, Cloud 3 Heiko works very well, and from the price perspective, it will be much cheaper. So depending on the use cases, we need to make the right selection of the FM.
+
+### Generate IaC
+
+Now that we understand the architecture diagram, we need to generate Terraform code (IaC) to test our idea. In most cases, a solution architect should be able to provide part of the IaC for MVP and test purposes. It's a good time to add this to our SA Agent.
+
+#### 1. Prepare the Right Prompt for `iac_gen_tool` Function
+
+The first step is to prepare a good prompt to generate the code.
+
+```txt
+Generates Infrastructure as Code (IaC) scripts based on a customer's request.
+
+    Args:
+        prompt (str): The customer's request.
+
+    Returns:
+        str: The S3 path where the generated IaC code is saved.
+```
+
+#### 2. Finilizing of the prompt
+
+From the first step, we prepared the prompt with args from the end user input. But we also need to add a specific ending to the prompt to ensure the FM does exactly what we want.
+
+```txt
+prompt_ending = "Act as a DevOps Engineer. Carefully analyze the customer requirements provided and identify all AWS services and integrations needed for the solution. Generate the Terraform code required to provision and configure each AWS service, writing the code step-by-step. Provide only the final Terraform code, without any additional comments, explanations, markdown formatting, or special symbols."
+```
+
+For that reason we added `prompt_ending` variable which we will add to the final prompt to FM. 
+
+#### 3. Storing the result on S3
+
+Most usually we need to store somewhere Terraform code. For that reason we difined S3 bucket, where we want to store the code, the same code we will use to estimate cost of the infrastcuture. Detail implementation how to work with S3 you will find on the function  `iac_gen_tool`. 
+
+<div align="center">
+    <img src="images/image10_iac_code.png" width="600">
+</div>
 
 ## Tool 3 - Estimate Cost using InfraCost
 
