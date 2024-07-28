@@ -71,6 +71,7 @@ During the configuration, you need to set permissions for the job. This includes
 #### 4. Choose Data Source
 
 Select your data source. Options include:
+
 - S3 bucket (our case)
 - Web Crawler
 - Confluence
@@ -185,11 +186,11 @@ From the first step, we prepared the prompt with args from the end user input. B
 prompt_ending = "Act as a DevOps Engineer. Carefully analyze the customer requirements provided and identify all AWS services and integrations needed for the solution. Generate the Terraform code required to provision and configure each AWS service, writing the code step-by-step. Provide only the final Terraform code, without any additional comments, explanations, markdown formatting, or special symbols."
 ```
 
-For that reason we added `prompt_ending` variable which we will add to the final prompt to FM. 
+For that reason we added `prompt_ending` variable which we will add to the final prompt to FM.
 
 #### 3. Storing the result on S3
 
-Most usually we need to store somewhere Terraform code. For that reason we difined S3 bucket, where we want to store the code, the same code we will use to estimate cost of the infrastcuture. Detail implementation how to work with S3 you will find on the function  `iac_gen_tool`. 
+Most usually we need to store somewhere Terraform code. For that reason we difined S3 bucket, where we want to store the code, the same code we will use to estimate cost of the infrastcuture. Detail implementation how to work with S3 you will find on the function  `iac_gen_tool`.
 
 <div align="center">
     <img src="images/image10_iac_code.png" width="600">
@@ -197,7 +198,91 @@ Most usually we need to store somewhere Terraform code. For that reason we difin
 
 ## Tool 3 - Estimate Cost using InfraCost
 
-Viktor writes the steps
+In the previous step, we created the code for our future infrastructure. For a solution architect, it's crucial to estimate the approximate cost of the infrastructure for the customer. In this step, we will integrate [infracost](https://github.com/infracost/infracost) into our SA agent as the third tool.
+
+### 1. Prepare Docker image
+
+InfraCost can be distributed as a binary file, which you can install on your local machine, or you can add it to your Docker application. We will go with the Docker option since the next step involves running the Docker file as a Lambda function.
+
+In our Dockerfile, we specify the version of InfraCost to use:
+
+```Dockerfile
+FROM infracost/infracost:ci-latest as infracost
+```
+
+Next, we copy the required files:
+
+```
+COPY --from=infracost /usr/bin/infracost /app/
+```
+
+You can find the complete Dockerfile in this repository.
+
+### 2. Prepare Prompt for Infrastructure Cost Estimation
+
+Just like the previous step, defining a good prompt is crucial, especially for mathematical calculations.
+
+```txt
+For services with multiple line items (e.g., RDS), aggregate the costs into a single total for that service. Present the cost analysis as a list, with each service and its corresponding monthly cost. Finally, include the total monthly cost for the entire infrastructure.
+```
+
+This prompt helps to avoid calculation mistakes and aggregate costs for all services.
+
+### 3. Get Local Version of Terraform Code
+
+In Tool #2, we generated the Terraform code and stored it on S3. Now, we need to copy the code locally and run InfraCost against it to get the results.
+
+```python
+local_file_path = os.path.join(local_dir, os.path.basename(latest_file_key))
+    s3.download_file(bucket_name, latest_file_key, local_file_path)
+    
+```
+
+### 4. Run InfraCost
+
+With our code now local, it's time to run InfraCost.
+
+```python
+infracost_cmd = f"infracost breakdown --path /tmp/infracost-evaluate > {cost_file_path}"
+    try:
+        subprocess.run(infracost_cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        # Read the result file even if the command returns a non-zero exit code
+        with open(cost_file_path, 'r') as f:
+            cost_file = f.read()
+        print(f"Infracost command returned non-zero exit code: {e.returncode}")
+        print(f"Result: {cost_file}")
+    else:
+        with open(cost_file_path, 'r') as f:
+            cost_file = f.read()
+        print(f"Result: {cost_file}")
+```
+
+<div align="center">
+    <img src="images/image11_infracost_result.png" width="600">
+</div>
+
+
+### 5. Store the Result on S3
+
+For traceability and future use, we will store the result in an S3 bucket under the subfolder iac-cost.
+
+### 6. Send the result to FM
+
+Now, we can send the InfraCost output to FM (e.g., Claude) to evaluate the cost and analyze the output.
+
+```python
+generated_text = call_claude_sonnet(cost_file + prompt + prompt_ending)
+```
+
+As a result, we see the breakdown of all services and the total cost:
+
+
+<div align="center">
+    <img src="images/image12_infracost_fm.png" width="600">
+</div>
+
+We have now configured all tools for our agent and are ready to combine them into one unified agent.
 
 ## Configure AI Agent using Amazon Bedrock
 
