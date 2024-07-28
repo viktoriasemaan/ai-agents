@@ -262,7 +262,6 @@ infracost_cmd = f"infracost breakdown --path /tmp/infracost-evaluate > {cost_fil
     <img src="images/image11_infracost_result.png" width="600">
 </div>
 
-
 ### 5. Store the Result on S3
 
 For traceability and future use, we will store the result in an S3 bucket under the subfolder iac-cost.
@@ -277,7 +276,6 @@ generated_text = call_claude_sonnet(cost_file + prompt + prompt_ending)
 
 As a result, we see the breakdown of all services and the total cost:
 
-
 <div align="center">
     <img src="images/image12_infracost_fm.png" width="600">
 </div>
@@ -288,20 +286,98 @@ We have now configured all tools for our agent and are ready to combine them int
 
 ### 1. Prepare Docker file
 
+First, we need to prepare the Dockerfile. We already copied the InfraCost binary into our Dockerfile. Now, we need to add all other tools and requirements for the agent.
+
+We will use `python:3.11` as the base image:
+
+```txt
+FROM amazon/aws-lambda-python:3.11
+```
+
+Next, copy our code into the Dockerfile:
+
+```
+COPY index.py ${LAMBDA_TASK_ROOT}
+COPY tools.py ${LAMBDA_TASK_ROOT}
+```
+
 ### 2. Build and Upload Docker file to ECR
 
-Auth to ECR 
-Build process of Docker
+The next step is to build and upload our image to ECR. To build our Docker image, use the command:
 
-### 3. Prepare API file with new methods 
+```
+docker build -t ai-agents .
+```
 
-### 4. Index.py will call seperate tool 
+Then, authenticate with our ECR repository. We have already created the repository. Use the following command to authenticate:
 
-### 5. Deploy Lambda 
+```
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 123412341234.dkr.ecr.us-west-2.amazonaws.com
+```
 
-Lambda configuration memory, timeout
+Where `123412341234` is your AWS account ID.
 
-### 6. Permission and roles 
+Next, tag the image correctly and push it to the repository:
+
+```
+docker tag ai-agents:latest 123412341234.dkr.ecr.us-west-2.amazonaws.com/ai-agents:latest
+docker push 123412341234.dkr.ecr.us-west-2.amazonaws.com/ai-agents:latest
+```
+
+The image is ready, but for our agent to work correctly, we need to prepare the OpenAPI schema.
+
+### 3. Prepare API File with New Methods
+
+The API schema will help define each action clearly:
+
+- Operation name
+- Input parameters
+- Data types
+- Response details
+
+This helps agents know when to use it, how to call it, and how to use the results. It provides a language-agnostic API definition using an industry-standard schema.
+
+In our case, we just updated the required parameters by adding the following blocks:
+
+- `/iac_gen`
+- `/iac_estimate_tool`
+- `/answer_query`
+
+### 4. Index.py Will Call Separate Tool
+
+The logic that determines which part of the agent needs to run is defined in the `index.py` file:
+
+```python
+if api_path == "/answer_query":
+    ...
+elif api_path == "/iac_gen":
+    ...
+elif api_path == "/iac_estimate_tool":
+   ...
+else:
+    body = f"{action}::{api_path} is not a valid API, try another one."
+    response_code = 400
+```
+
+### 5. Deploy Lambda
+
+All parts of our agent are ready, so it's time to deploy it to our Lambda function. First, we need to define the image we prepared in step #2 for the Lambda function.
+
+<div align="center">
+    <img src="images/image13_lambda_image.png" width="600">
+</div>
+
+Also, since we need to work with generative AI, we need to configure the timeout and the appropriate amount of memory for the function:
+
+<div align="center">
+    <img src="images/image14_lambda_configuration.png" width="600">
+</div>
+
+### 6. Permissions and Roles
+
+One of the most important parts is security and the right permissions for the Lambda function. First, we need to define the permissions that the Lambda function will need to access:
+
+**Amazon Bedrock** permissions:
 
    ```json
    {
@@ -319,269 +395,104 @@ Lambda configuration memory, timeout
     }
    ```
 
-   S3 
-Create one policie named for example Bedrock-S3-GetObject
+**Amazon S3** permissions, as we will store IaC code on Amazon S3 and need access to run estimations:
 
-    ```json
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "VisualEditor0",
-                "Effect": "Allow",
-                "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::bedrockreinvent/agent_aws_openapi.json"
-            }
-        ]
-    }
-    ```
+<div align="center">
+    <img src="images/image15_lambda_s3permissions.png" width="600">
+</div>
 
-Policy to call from bedrock the lambda 
-
-
-### 6. Lambda store Env variable infracost 
-
-### 7. Create Agent on Bedrock 
-
-FM version 
-ROLE!!
-Pmompt with role 
-KB
-Action group - lambda 
-
-### 8. Action group 
-
-Lambda
-OpenAPI schema 
-
-### 9. Test our agent - generate code and estimate 
-
-Show trace
-
-
-
-### Create the IAM roles
-
-1. In your console, go to your [IAM Dashboard](https://us-east-1.console.aws.amazon.com/iam/).
-2. Go to Policies in the right-hand side menu.
-3. Create one policie named for example Bedrock-InvokeModel-Policy
-
-
-
-4. 
-
-5. Create a role named AmazonBedrockExecutionRoleForAgents_workshop and attach the two policies we just created previously.
-
-To get started with the agent, open the Bedrock console, select Agents in the left navigation panel, then choose Create Agent.
-
-![Agent Start](/images/agents-for-amazon-bedrock-1.png)
-
-This starts the agent creation workflow.
-
-1. Provide agent details including agent name, description, whether the agent is allowed to request additional user inputs, and choose the IAM role created earlier.
-
-Here is what I used for this Agent
-
-```
-Agent-AWS
-
-Agent AWS is an automated, AI-powered agent that helps customers with knowledge of AWS by querying the AWS Well-Architected Framework and writing code.
-```
-
-![Agent Start](/images/agent_details.png)
-
-2. Select a foundation model from Bedrock that fits your use case. Here, you provide an instruction to your agent in natural language. The instruction tells the agent what task it’s supposed to perform and the persona it’s supposed to assume. For example, “You are an expert AWS Certified Solutions Architect. Your role is to help customers understand best practices on building on AWS.”
-
-![Agent Model](/images/agent_model.png)
-
-3. Skip the Add Action Groups and create an Agent.
-
-![Agent Model](/images/agent_create.png)
-
-4. Now you can test your agent, but you won’t find it very helpful at the moment if you ask it AWS related questions such as "How can I design secure VPCs?"
-
-![Agent Model](/images/agent_not_working.png)
-
-This is where we have to develop "tools" for the agent which are orchestrated through the action groups.
-
-## Building Agent Tools
-
-Tools are self-contained functions designed to perform a specific task. In `tools.py` we have two functions we are going to provide to our agent `aws_well_arch_tool` and `code_gen_tool`.
-
-### Querying the AWS Well-Architected Framework
-
-The code for this tool uses [Langchain](https://python.langchain.com/docs/get_started/introduction.html) a popular framework for developing applications powered by large language models. Langchain provides an interface to use Bedrock Embeddings with a [local vector database](https://github.com/facebookresearch/faiss) to retrieve documents relevant to a user's query. Using the documents, we can then send a request to the Titan model using Bedrock to get a response back with relevant context. this is known as [Retrieval Augmented Generation (RAG)](https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-customize-rag.html).
-
-To learn more about how the data was collected and embeddings read this [blog post](https://community.aws/posts/well-arch-chatbot#data-collection)
-
-The code used to collect the data is in `ingest.py`
-
-### Code Generation Tool
-
-The code for this tool, uses a call to the Claude-V2 model to generate code based on a user's request.
-
-### Testing tools
-
-To test the tools, you can run
-
-```bash
-python test_tools.py
-```
-
-You should get output similar to this
-
-```
- AWS provides a set of best practices for designing secure VPCs. These best practices include creating network layers, controlling traffic at all layers, automating network protection, implementing inspection and protection, and considering whether resources need to be in public subnets.
- Here is some documentation for more details: 
-https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/protecting-networks.html
-https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/sec_network_protection_create_layers.html
-https://docs.aws.amazon.com/wellarchitected/latest/framework/sec_network_protection_create_layers.html
-https://docs.aws.amazon.com/wellarchitected/latest/framework/sec_network_protection_create_layers.html
-```
-
-```python
-import boto3
-
-def upload_file_to_s3(file_name, bucket, object_name=None):
-    """Upload a file to an S3 bucket
-    
-    Args:
-        file_name (str): File to upload
-        bucket (str): Bucket to upload to
-        object_name (str): S3 object name. If not specified then file_name is used
-    """
-    
-    # If S3 object_name was not specified, use file_name
-    if object_name is None:
-        object_name = file_name
-
-    # Upload the file    
-    s3_client = boto3.client('s3')
-    s3_client.upload_file(file_name, bucket, object_name)
-...    
-```
-
-Feel free to play around with the prompts by editing `test_tools.py`
-
-## Building the Lambda Function
-
-For our Agent to use our tools, we must encapsulate the logic into a lambda function. `index.py` has the logic to parse a request from the agent, and then pick the correct tool to use. The function will then format the response and send it back to the agent.
-
-### Push Docker Image to ECR
-
-We will package this Lambda function as a container, so create a new ECR following these [instructions](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html). I called mine `bedrock_sa_tools`
-
-![ECR Repo](/images/ecr_repo.png)
-
-Once the repo is created, follow the instructions in the `View push commands` button to upload the Docker Image to ECR.
-
-### Create the Lambda Function
-
-1. Navigate to the [Lambda Console](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions) and click on `Create function` button.
-
-2. Chose Container image then provide the `Function name` (berdock_sa_tools) and for the `Container image URI` select the container you uploaded.
-
-3. Click on Create function button in the bottom of the page
-
-### Update Lambda Permissions
-
-1. Once the function is created, click on the Configuration Tab in the same page and `Choose Permissions` from the left side panel
-
-2. Click on Add permissions button in Resource-based policy statement section to provide the permission to invoke lambda functions from bedrock
-
-![Lambda Permissions](/images/lambda_perms.png)
-
-3. Provide Statement Id as `agent` , Principal as `bedrock.amazonaws.com` and Action as `lambda:InvokeFunction`. Click Save after adding all the above three information.
-
-![Lambda Permissions](/images/lambda_perms_2.png)
-
-4. Add the following Policy Statement to your Execution role, so Lambda can call Bedrock. (Details [here](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_manage-attach-detach.html#add-policies-console))
+Lastly, grant Amazon Bedrock permission to call the Lambda function:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": "bedrock:InvokeModel",
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-### Testing Lambda Function
-
-To test your Lambda function:
-
-1. Click on the "Test" tab near the top of the page.
-
-2. Configure a test event that matches how the Agent will send a request:
-
-```
-{
-  "agent": {
-    "alias": "TSTALIASID",
-    "name": "Agent-AWS",
-    "version": "DRAFT",
-    "id": "KQI6ICMKZZ"
-  },
-  "sessionId": "975786472213626",
-  "httpMethod": "GET",
-  "sessionAttributes": {},
-  "inputText": "How can I create secure VPCs?",
-  "promptSessionAttributes": {},
-  "apiPath": "/query_well_arch_framework",
-  "messageVersion": "1.0",
-  "actionGroup": "agent_action_group",
-  "parameters": [
+  "Version": "2012-10-17",
+  "Id": "default",
+  "Statement": [
     {
-      "name": "query",
-      "type": "string",
-      "value": "How can I create secure VPCs?"
+      "Sid": "agent-allow",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "bedrock.amazonaws.com"
+      },
+      "Action": "lambda:InvokeFunction",
+      "Resource": "arn:aws:lambda:us-west-2:123412341234:function:vedmich_berdock_sa_tools",
+      "Condition": {
+        "ArnLike": {
+          "AWS:SourceArn": "arn:aws:bedrock:us-west-2:123412341234:agent/IUZ6246HLM"
+        }
+      }
     }
   ]
 }
 ```
 
-3. Click on "Test" to execute the Lambda function. You should see the results of the function invocation, which will be a response from the Titan Model.
+### 7. Lambda Store Environment Variable for InfraCost
 
-![Lambda Results](/images/lambda_results.png)
+The last configuration for our Amazon Lambda function is to provide the API key for InfraCost. We can store it in the `Environment variables` section:
 
-## Upload OpenAPI Spec
+<div align="center">
+    <img src="images/image16_lambda_infracost.png" width="600">
+</div>
 
-The [OpenAPI Specification (OAS)](https://swagger.io/specification/) defines a standard, language-agnostic interface to HTTP APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code.
+### 7. Create Agent on Bedrock
 
-Our agent will be able to understand what tool to use based on the request given to the user and then call the correct endpoint due to the OpenAPI spec.
+Now that we have created the Amazon Lambda function, it's time for the final step - creating the Agent. On the Amazon Bedrock console, we can create and configure Bedrock Agents. The main configuration points are:
 
-You will need to upload the `agent_aws_openapi.json` [file to an S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/upload-objects.html).
+- *Role for the agent* - permissions the agent will have on our AWS account
+- *Model* - which FM we will use. In our case, it is Claude 3 Haiku
+- *Prompt* - where we configure the role and main purpose of the agent
 
-## Create Action Group
 
-An action is a task that the agent can perform automatically by making API calls to your company systems. A set of actions is defined in an action group. The OpenAPI schema defines the API for all the actions in the group. The agent will invoke our Lambda function based on request, that will invoke the tools we built.
+<div align="center">
+    <img src="images/image17_agent_main_configuration.png" width="600">
+</div>
 
-1. To begin go to the Agents List Page and search for the Agent created earlier and click the Agent Name to load the agent details.
+We also configure the knowledge base for the agent:
+<div align="center">
+    <img src="images/image18_agent_kb.png" width="600">
+</div>
 
-2. Click on the `Working draft` link to go into the Agent and add the agent action.
+### 9. Action group
 
-3. Click on the `Add` button in Action groups section to create a new Action Group for the agent.
+The Action Group on the Agent is where we configure our Lambda function.
+<div align="center">
+    <img src="images/image19_lambda_function.png" width="600">
+</div>
 
-4. Provide the Action Group Name and Description (Optional). Choose the Lambda function and the S3 object for the API spec uploaded earlier.
+In the same section, we need to configure the OpenAPI schema, which we created in the previous steps. Now, we need to upload it to the S3 bucket and connect it to the agent.
 
-![Action Group](/images/action_group.png)
+<div align="center">
+    <img src="images/image20_agent_api.png" width="600">
+</div>
 
-5. Click on `Save and exit` button in the right bottom of the page.
+Now, we can save our agent and test it.
 
-6. Once the Agent Status is in `Ready` state in Agent home page. You can start the testing.
+### 10. Test our agent - generate code and estimate
 
-## Play Time
+We will test our agent to generate IaC and estimate the cost. Use the following prompt to test our agent:
 
-Now the agent will be much more helpful than it was prior to adding an action group
+```Write terraform code to build standard magento e-commerce application. Load 200 req/sec and 2000 number of products. And estimate cost of the solution based on the generated terraform code.
+```
 
-![Action Group](/images/working_agent.png)
+When we run our agent, we can trace its actions to understand what happens next and why. For the pre-processing step, we can see that the agent will use two tools from our setup:
 
-Try out some different prompts, and test the limits of the agent. Happy building!
+<div align="center">
+    <img src="images/image21_run_agent.png" width="600">
+</div>
+
+For every step, the agent will log the trace prompt and the next action:
+
+<div align="center">
+    <img src="images/image22_run_agent_trace.png" width="600">
+</div>
+
+The final result will show where the code for IaC and the cost estimation are stored:
+
+<div align="center">
+    <img src="images/image23_run_agent_trace.png" width="600">
+</div>
+
+That's how we built our solution architect generative AI agent. It's time to try out some different prompts and test the limits of the agent. Happy building!
 
 ## Security
 
