@@ -286,15 +286,22 @@ We have now configured all tools for our agent and are ready to combine them int
 
 ## Configure AI Agent using Amazon Bedrock
 
-Viktor writes the steps
+### 1. Prepare Docker file
 
-## from old tutorial (DELETE LATER)
+### 2. Build and Upload Docker file to ECR
 
-### Create the IAM roles
+Auth to ECR 
+Build process of Docker
 
-1. In your console, go to your [IAM Dashboard](https://us-east-1.console.aws.amazon.com/iam/).
-2. Go to Policies in the right-hand side menu.
-3. Create one policie named for example Bedrock-InvokeModel-Policy
+### 3. Prepare API file with new methods 
+
+### 4. Index.py will call seperate tool 
+
+### 5. Deploy Lambda 
+
+Lambda configuration memory, timeout
+
+### 6. Permission and roles 
 
    ```json
    {
@@ -312,7 +319,8 @@ Viktor writes the steps
     }
    ```
 
-4. Create one policie named for example Bedrock-S3-GetObject
+   S3 
+Create one policie named for example Bedrock-S3-GetObject
 
     ```json
     {
@@ -327,6 +335,40 @@ Viktor writes the steps
         ]
     }
     ```
+
+Policy to call from bedrock the lambda 
+
+
+### 6. Lambda store Env variable infracost 
+
+### 7. Create Agent on Bedrock 
+
+FM version 
+ROLE!!
+Pmompt with role 
+KB
+Action group - lambda 
+
+### 8. Action group 
+
+Lambda
+OpenAPI schema 
+
+### 9. Test our agent - generate code and estimate 
+
+Show trace
+
+
+
+### Create the IAM roles
+
+1. In your console, go to your [IAM Dashboard](https://us-east-1.console.aws.amazon.com/iam/).
+2. Go to Policies in the right-hand side menu.
+3. Create one policie named for example Bedrock-InvokeModel-Policy
+
+
+
+4. 
 
 5. Create a role named AmazonBedrockExecutionRoleForAgents_workshop and attach the two policies we just created previously.
 
