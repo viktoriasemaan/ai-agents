@@ -200,7 +200,7 @@ Most usually we need to store somewhere Terraform code. For that reason we difin
 
 In the previous step, we created the code for our future infrastructure. For a solution architect, it's crucial to estimate the approximate cost of the infrastructure for the customer. In this step, we will integrate [infracost](https://github.com/infracost/infracost) into our SA agent as the third tool.
 
-### 1. Prepare Docker image
+#### 1. Prepare Docker image
 
 InfraCost can be distributed as a binary file, which you can install on your local machine, or you can add it to your Docker application. We will go with the Docker option since the next step involves running the Docker file as a Lambda function.
 
@@ -218,7 +218,7 @@ COPY --from=infracost /usr/bin/infracost /app/
 
 You can find the complete Dockerfile in this repository.
 
-### 2. Prepare Prompt for Infrastructure Cost Estimation
+#### 2. Prepare Prompt for Infrastructure Cost Estimation
 
 Just like the previous step, defining a good prompt is crucial, especially for mathematical calculations.
 
@@ -228,7 +228,7 @@ For services with multiple line items (e.g., RDS), aggregate the costs into a si
 
 This prompt helps to avoid calculation mistakes and aggregate costs for all services.
 
-### 3. Get Local Version of Terraform Code
+#### 3. Get Local Version of Terraform Code
 
 In Tool #2, we generated the Terraform code and stored it on S3. Now, we need to copy the code locally and run InfraCost against it to get the results.
 
@@ -238,7 +238,7 @@ local_file_path = os.path.join(local_dir, os.path.basename(latest_file_key))
     
 ```
 
-### 4. Run InfraCost
+#### 4. Run InfraCost
 
 With our code now local, it's time to run InfraCost.
 
@@ -262,11 +262,11 @@ infracost_cmd = f"infracost breakdown --path /tmp/infracost-evaluate > {cost_fil
     <img src="images/image11_infracost_result.png" width="600">
 </div>
 
-### 5. Store the Result on S3
+#### 5. Store the Result on S3
 
 For traceability and future use, we will store the result in an S3 bucket under the subfolder iac-cost.
 
-### 6. Send the result to FM
+#### 6. Send the result to FM
 
 Now, we can send the InfraCost output to FM (e.g., Claude) to evaluate the cost and analyze the output.
 
@@ -284,7 +284,7 @@ We have now configured all tools for our agent and are ready to combine them int
 
 ## Configure AI Agent using Amazon Bedrock
 
-### 1. Prepare Docker file
+#### 1. Prepare Docker file
 
 First, we need to prepare the Dockerfile. We already copied the InfraCost binary into our Dockerfile. Now, we need to add all other tools and requirements for the agent.
 
@@ -301,7 +301,7 @@ COPY index.py ${LAMBDA_TASK_ROOT}
 COPY tools.py ${LAMBDA_TASK_ROOT}
 ```
 
-### 2. Build and Upload Docker file to ECR
+#### 2. Build and Upload Docker file to ECR
 
 The next step is to build and upload our image to ECR. To build our Docker image, use the command:
 
@@ -326,7 +326,7 @@ docker push 123412341234.dkr.ecr.us-west-2.amazonaws.com/ai-agents:latest
 
 The image is ready, but for our agent to work correctly, we need to prepare the OpenAPI schema.
 
-### 3. Prepare API File with New Methods
+#### 3. Prepare API File with New Methods
 
 The API schema will help define each action clearly:
 
@@ -343,7 +343,7 @@ In our case, we just updated the required parameters by adding the following blo
 - `/iac_estimate_tool`
 - `/answer_query`
 
-### 4. Index.py Will Call Separate Tool
+#### 4. Index.py Will Call Separate Tool
 
 The logic that determines which part of the agent needs to run is defined in the `index.py` file:
 
@@ -359,7 +359,7 @@ else:
     response_code = 400
 ```
 
-### 5. Deploy Lambda
+#### 5. Deploy Lambda
 
 All parts of our agent are ready, so it's time to deploy it to our Lambda function. First, we need to define the image we prepared in step #2 for the Lambda function.
 
@@ -373,7 +373,7 @@ Also, since we need to work with generative AI, we need to configure the timeout
     <img src="images/image14_lambda_configuration.png" width="600">
 </div>
 
-### 6. Permissions and Roles
+#### 6. Permissions and Roles
 
 One of the most important parts is security and the right permissions for the Lambda function. First, we need to define the permissions that the Lambda function will need to access:
 
@@ -426,7 +426,7 @@ Lastly, grant Amazon Bedrock permission to call the Lambda function:
 }
 ```
 
-### 7. Lambda Store Environment Variable for InfraCost
+#### 7. Lambda Store Environment Variable for InfraCost
 
 The last configuration for our Amazon Lambda function is to provide the API key for InfraCost. We can store it in the `Environment variables` section:
 
@@ -434,7 +434,7 @@ The last configuration for our Amazon Lambda function is to provide the API key 
     <img src="images/image16_lambda_infracost.png" width="600">
 </div>
 
-### 7. Create Agent on Bedrock
+#### 7. Create Agent on Bedrock
 
 Now that we have created the Amazon Lambda function, it's time for the final step - creating the Agent. On the Amazon Bedrock console, we can create and configure Bedrock Agents. The main configuration points are:
 
@@ -452,7 +452,7 @@ We also configure the knowledge base for the agent:
     <img src="images/image18_agent_kb.png" width="600">
 </div>
 
-### 9. Action group
+#### 9. Action group
 
 The Action Group on the Agent is where we configure our Lambda function.
 <div align="center">
@@ -467,7 +467,7 @@ In the same section, we need to configure the OpenAPI schema, which we created i
 
 Now, we can save our agent and test it.
 
-### 10. Test our agent - generate code and estimate
+#### 10. Test our agent - generate code and estimate
 
 We will test our agent to generate IaC and estimate the cost. Use the following prompt to test our agent:
 
