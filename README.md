@@ -471,7 +471,8 @@ Now, we can save our agent and test it.
 
 We will test our agent to generate IaC and estimate the cost. Use the following prompt to test our agent:
 
-```Write terraform code to build standard magento e-commerce application. Load 200 req/sec and 2000 number of products. And estimate cost of the solution based on the generated terraform code.
+```txt
+Write terraform code to build standard magento e-commerce application. Load 200 req/sec and 2000 number of products. And estimate cost of the solution based on the generated terraform code.
 ```
 
 When we run our agent, we can trace its actions to understand what happens next and why. For the pre-processing step, we can see that the agent will use two tools from our setup:
