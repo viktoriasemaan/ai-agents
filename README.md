@@ -1,8 +1,9 @@
-# Demos and samples for Building an AWS Solutions Architect agent with Amazon Bedrock (Berlin Summit BOA305)
+# Quick Start: AWS Solutions Architect AI Agent with Amazon Bedrock
 
-This repository is complementary to breakout session on "Building an AWS Solutions Architect agent with Amazon Bedrock" at the [AWS Berlin Summit 2024](https://aws.amazon.com/events/summits/emea/berlin/)
+This repository contains instructions and code samples for building an AWS Solutions Architect Agent with Amazon Bedrock.
 
-🎥 Watch the session [here](https://bit.ly/boa305-berlin)
+🎥 In addition, you can find the session recording [here](https://bit.ly/boa305-berlin)
+
 
 [!["BOA305"](http://img.youtube.com/vi/8ftKjZyaqNk/0.jpg)](https://www.youtube.com/watch?v=8ftKjZyaqNk "BOA305")
 
