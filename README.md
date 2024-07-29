@@ -14,7 +14,7 @@ This repo includes a tutorial for the following solutions:
 1. **Tool 1** - Q&A ChatBot utilizing Knowledge Bases for Amazon Bedrock
 2. **Tool 2** - Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 3. **Tool 3** - Estimate costs using InfraCost
-4. Configure an AI Agent using Amazon Bedrock
+4. **Integrate Tools** - Build AI Agent using Amazon Bedrock
 
 By the end of this tutorial, you will learn how to create an Amazon Bedrock Agent that can assist with querying the AWS documentation, suggest and explain AWS solutions, generate Infrastructure as Code (IaC), and estimate the monthly cost to run a solution on AWS.
 
@@ -125,7 +125,7 @@ To test this functionality, use the `test_tools.py` file. Uncomment the section 
 
 This tool, the SA Q&A, helps quickly find information not available in the default foundation model. For example, it can provide the latest details on zero-ETL with Aurora and RedShift. The next step is to assist with big architecture diagrams and generate Infrastructure as Code (IaC) for the MVP.
 
-## Tool 2- Explain diagrams and generate IaC using multimodal LLM (Claude 3)
+## Tool 2 - Explain diagrams and generate IaC using multimodal LLM (Claude 3)
 
 Our next tool will help us generate IaC when we need an MVP. Before we jump into IaC generation, we should take advantage of Claude 3's multimodal capabilities, which include vision. Claude 3 can analyze images, making it particularly helpful for understanding and explaining architecture diagrams. By using Claude 3, we can gain insights into the components and relationships within these diagrams, enhancing our ability to create accurate and effective infrastructure as code.
 
@@ -197,7 +197,7 @@ Typically, we need to store the Terraform code in a designated location. For thi
     <img src="images/image10_iac_code.png" width="600">
 </div>
 
-## Tool 3 - Estimate Cost using InfraCost
+## Tool 3 - Estimate costs using InfraCost
 
 In the previous steps, we created the code to deploy the infrastructure. Before we proceed with deployment, let's estimate the approximate monthly cost to run this infrastructure for the customer. In this step, we will integrate the third-party tool [infracost](https://github.com/infracost/infracost) into our SA agent.
 
@@ -283,7 +283,7 @@ As a result, we see the breakdown of all services and the total cost:
 
 Congratulations! We have now configured all tools for our agent and are ready to combine them into one unified agent.
 
-## Configure AI Agent using Amazon Bedrock
+## Integrate Tools - Build AI Agent using Amazon Bedrock
 
 <div align="center">
     <img src="images/image24_agent_overview.gif" width="600">
