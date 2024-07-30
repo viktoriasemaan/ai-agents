@@ -23,7 +23,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install -U boto3 botocore
 
-ENV INFRACOST_API_KEY=ico-hPcESwPAMabOPOS1uy1kAviKSEIbJJIt
+ENV INFRACOST_API_KEY=YOURKEY
 
 # Copy function code
 COPY infracost.py ${LAMBDA_TASK_ROOT}
